@@ -16,9 +16,18 @@ import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
+    private static final int NONE = -1;
+
     private static final int CONTACT_REQUEST_CODE = 2;
+
+    private static final String TXT_CONTACT = "Selected contact: ";
+    private static final String TXT_CONTACT_NONE = TXT_CONTACT + "(none)";
+
+    private static final String ERROR_NO_CONTACT = "No contact selected!";
+
+    private static final String KOLMI_FORMAT = "*#121*@#";
+
     private TextView txtContact;
-    private String contactName;
     private int contactPhone;
 
     @Override
@@ -47,31 +56,31 @@ public class MainActivity extends AppCompatActivity
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
                 };
 
-                if(uri == null)
+                if(uri != null)
                 {
-                    toast(this,"No contact selected!");
-                    txtContact.setText("Selected contact: (none)");
-                    contactName = "";
-                    contactPhone = -1;
-                    return;
+                    Cursor cursor = getContentResolver().query(uri, projection,
+                            null, null, null);
+                    cursor.moveToFirst();
+
+                    int numberColumnIndex = cursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    contactPhone = cursor
+                            .getInt(numberColumnIndex);
+
+                    int nameColumnIndex = cursor
+                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                    String contactName = cursor
+                            .getString(nameColumnIndex);
+                    txtContact.setText(TXT_CONTACT + contactName);
+
+                    cursor.close();
                 }
-
-                Cursor cursor = getContentResolver().query(uri, projection,
-                        null, null, null);
-                cursor.moveToFirst();
-
-                int numberColumnIndex = cursor
-                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                contactPhone = cursor
-                        .getInt(numberColumnIndex);
-
-                int nameColumnIndex = cursor
-                        .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                contactName = cursor
-                        .getString(nameColumnIndex);
-                txtContact.setText("Selected contact: "+contactName);
-
-                cursor.close();
+                else
+                {
+                    toast(this,ERROR_NO_CONTACT);
+                    txtContact.setText(TXT_CONTACT_NONE);
+                    contactPhone = NONE;
+                }
                 break;
             default:
                 break;
@@ -89,14 +98,15 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("MissingPermission")
     public void sendKolmi(View v)
     {
-        if(contactPhone != -1)
+        if(contactPhone != NONE)
         {
-            Intent intent = new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+Uri.encode("*#121*"+contactPhone+"#")));
+            Intent intent = new Intent(Intent.ACTION_CALL,
+                    Uri.parse("tel:"+Uri.encode(KOLMI_FORMAT.replace("@",contactPhone+""))));
             startActivity(intent);
         }
         else
         {
-            toast(this,"No contact selected!");
+            toast(this,ERROR_NO_CONTACT);
         }
     }
 }

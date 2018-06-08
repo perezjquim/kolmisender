@@ -13,21 +13,26 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.3"
-        android:text="Selected contact: (none)"
+        android:textSize="20sp"
+        android:text="@string/TXT_CONTACT_DEFAULT"
         android:gravity="center"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.4"
-        android:text="Select contact"
+        android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+        android:text="@string/LBL_SELECT_CONTACT"
         android:onClick="selectContact"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.3"
-        android:text="Send Kolmi"
+        android:background="@color/colorPrimary"
+        android:drawableLeft="@android:drawable/ic_menu_send"
+        android:text="@string/LBL_SEND_KOLMI"
+        android:textColor="@android:color/white"
         android:onClick="sendKolmi"/>
 
 </LinearLayout>
