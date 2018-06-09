@@ -25,14 +25,14 @@
         android:text="@string/LBL_SELECT_CONTACT"
         android:onClick="selectContact"/>
 
-    <Button
+    <ImageButton
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.3"
         android:background="@color/colorPrimary"
-        android:drawableLeft="@android:drawable/ic_menu_send"
-        android:text="@string/LBL_SEND_KOLMI"
-        android:textColor="@android:color/white"
-        android:onClick="sendKolmi"/>
+        android:src="@android:drawable/ic_menu_send"
+        android:onClick="sendKolmi"
+        android:scaleType="fitCenter"
+        android:padding="30dp"/>
 
 </LinearLayout>

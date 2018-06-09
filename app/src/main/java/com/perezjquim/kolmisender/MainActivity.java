@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity
     private static final String KOLMI_FORMAT = "*#121*@#";
 
     private TextView txtContact;
-    private int contactPhone;
+    private String contactPhone;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -49,37 +49,43 @@ public class MainActivity extends AppCompatActivity
                 PermissionChecker.restart();
                 break;
             case CONTACT_REQUEST_CODE:
-                Uri uri = data.getData();
-                String[] projection =
+                if(data != null)
                 {
-                        ContactsContract.CommonDataKinds.Phone.NUMBER,
-                        ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-                };
+                    Uri uri = data.getData();
+                    String[] projection =
+                            {
+                                    ContactsContract.CommonDataKinds.Phone.NUMBER,
+                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+                            };
 
-                if(uri != null)
-                {
-                    Cursor cursor = getContentResolver().query(uri, projection,
-                            null, null, null);
-                    cursor.moveToFirst();
+                    if(uri != null)
+                    {
+                        Cursor cursor = getContentResolver().query(uri, projection,
+                                null, null, null);
+                        cursor.moveToFirst();
 
-                    int numberColumnIndex = cursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                    contactPhone = cursor
-                            .getInt(numberColumnIndex);
+                        int numberColumnIndex = cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        contactPhone = cursor
+                                .getString(numberColumnIndex)
+                                .trim()
+                                .replace("-","")
+                                .replace("+351","");
 
-                    int nameColumnIndex = cursor
-                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                    String contactName = cursor
-                            .getString(nameColumnIndex);
-                    txtContact.setText(TXT_CONTACT + contactName);
+                        int nameColumnIndex = cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+                        String contactName = cursor
+                                .getString(nameColumnIndex);
+                        txtContact.setText(TXT_CONTACT + contactName);
 
-                    cursor.close();
+                        cursor.close();
+                    }
                 }
                 else
                 {
                     toast(this,ERROR_NO_CONTACT);
                     txtContact.setText(TXT_CONTACT_NONE);
-                    contactPhone = NONE;
+                    contactPhone = "";
                 }
                 break;
             default:
@@ -98,10 +104,10 @@ public class MainActivity extends AppCompatActivity
     @SuppressLint("MissingPermission")
     public void sendKolmi(View v)
     {
-        if(contactPhone != NONE)
+        if(!contactPhone.equals(""))
         {
             Intent intent = new Intent(Intent.ACTION_CALL,
-                    Uri.parse("tel:"+Uri.encode(KOLMI_FORMAT.replace("@",contactPhone+""))));
+                    Uri.parse("tel:"+Uri.encode(KOLMI_FORMAT.replace("@",contactPhone))));
             startActivity(intent);
         }
         else
