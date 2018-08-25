@@ -33,5 +33,5 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.github.perezjquim:permissionchecker:master-SNAPSHOT'
-    implementation 'com.github.perezjquim:uihelper:master-SNAPSHOT'
+    implementation ('com.github.perezjquim:uihelper:master-SNAPSHOT') { changing = true }
 }

@@ -16,8 +16,6 @@ import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
-    private static final int NONE = -1;
-
     private static final int CONTACT_REQUEST_CODE = 2;
 
     private static final String TXT_CONTACT = "Selected contact: ";
@@ -35,6 +33,8 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         PermissionChecker.init(this);
+        super.setTheme(R.style.AppTheme);
+
         setContentView(R.layout.activity_main);
         txtContact = findViewById(R.id.txtContact);
     }
