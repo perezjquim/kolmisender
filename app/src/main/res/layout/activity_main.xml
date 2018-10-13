@@ -12,15 +12,23 @@
         android:id="@+id/txtContact"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
+        android:layout_weight="0.1"
         android:textSize="20sp"
         android:text="@string/TXT_CONTACT_DEFAULT"
         android:gravity="center"/>
 
+    <QuickContactBadge
+        android:id="@+id/badge"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.6"
+        android:src="@android:drawable/ic_menu_gallery"
+        android:scaleType="center"/>
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.4"
+        android:layout_weight="0.2"
         android:drawableLeft="@android:drawable/ic_menu_my_calendar"
         android:text="@string/LBL_SELECT_CONTACT"
         android:onClick="selectContact"/>
@@ -28,11 +36,10 @@
     <ImageButton
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.3"
+        android:layout_weight="0.1"
         android:background="@color/colorPrimary"
         android:src="@android:drawable/ic_menu_send"
         android:onClick="sendKolmi"
-        android:scaleType="fitCenter"
-        android:padding="30dp"/>
+        android:scaleType="fitCenter" />
 
 </LinearLayout>

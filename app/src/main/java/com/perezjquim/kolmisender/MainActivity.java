@@ -2,24 +2,25 @@ package com.perezjquim.kolmisender;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.QuickContactBadge;
 import android.widget.TextView;
 
 import com.perezjquim.PermissionChecker;
+
+import java.io.FileNotFoundException;
 
 import static com.perezjquim.UIHelper.toast;
 
 public class MainActivity extends AppCompatActivity
 {
     private static final int CONTACT_REQUEST_CODE = 2;
-
-    private static final String TXT_CONTACT = "Selected contact: ";
-    private static final String TXT_CONTACT_NONE = TXT_CONTACT + "(none)";
 
     private static final String ERROR_NO_CONTACT = "No contact selected!";
 
@@ -53,10 +54,11 @@ public class MainActivity extends AppCompatActivity
                 {
                     Uri uri = data.getData();
                     String[] projection =
-                            {
-                                    ContactsContract.CommonDataKinds.Phone.NUMBER,
-                                    ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
-                            };
+                    {
+                            ContactsContract.CommonDataKinds.Phone.NUMBER,
+                            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                            ContactsContract.CommonDataKinds.Phone.PHOTO_URI
+                    };
 
                     if(uri != null)
                     {
@@ -66,17 +68,35 @@ public class MainActivity extends AppCompatActivity
 
                         int numberColumnIndex = cursor
                                 .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                        int photoColumnIndex = cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+                        int nameColumnIndex = cursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+
                         contactPhone = cursor
                                 .getString(numberColumnIndex)
                                 .trim()
                                 .replace("-","")
                                 .replace("+351","");
 
-                        int nameColumnIndex = cursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-                        String contactName = cursor
-                                .getString(nameColumnIndex);
-                        txtContact.setText(TXT_CONTACT + contactName);
+                        QuickContactBadge badge = findViewById(R.id.badge);
+
+                        txtContact.setText(cursor.getString(nameColumnIndex));
+                        badge.assignContactUri(uri);
+
+                        try
+                        {
+                            badge.setImageURI(Uri.parse(cursor.getString(photoColumnIndex)));
+                        }
+                        catch(NullPointerException ex)
+                        {
+                            badge.setImageResource(android.R.drawable.ic_menu_gallery);
+                        }
+
+                        if(badge.getDrawable() == null)
+                        {
+                            badge.setImageResource(android.R.drawable.ic_menu_gallery);
+                        }
 
                         cursor.close();
                     }
@@ -84,7 +104,7 @@ public class MainActivity extends AppCompatActivity
                 else
                 {
                     toast(this,ERROR_NO_CONTACT);
-                    txtContact.setText(TXT_CONTACT_NONE);
+                    txtContact.setText(getString(R.string.TXT_CONTACT_DEFAULT));
                     contactPhone = "";
                 }
                 break;
@@ -95,8 +115,7 @@ public class MainActivity extends AppCompatActivity
 
     public void selectContact(View v)
     {
-        Uri uri = Uri.parse("content://contacts");
-        Intent intent = new Intent(Intent.ACTION_PICK, uri);
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
         startActivityForResult(intent, CONTACT_REQUEST_CODE);
     }

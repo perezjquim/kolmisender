@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">KolmiSender</string>
     <string name="LBL_SELECT_CONTACT">Select contact</string>
-    <string name="LBL_SEND_KOLMI">Send Kolmi</string>
-    <string name="TXT_CONTACT_DEFAULT">Selected contact: (none)</string>
+    <string name="TXT_CONTACT_DEFAULT">(no contact selected)</string>
 </resources>
